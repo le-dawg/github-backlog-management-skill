@@ -4,7 +4,7 @@
   "description": "GitHub-native backlog automation. Manage Issues + Projects v2 with AI-enforced INVEST quality, dependency tracking, and one-command execution.",
   "version": "0.3.2",
   "author": {
-    "name": "Filipe Utzig",
+    "name": "le-dawg",
     "email": "le-dawg@users.noreply.github.com"
   },
   "homepage": "https://github.com/le-dawg/github-backlog-management-skill",

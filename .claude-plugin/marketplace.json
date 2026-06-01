@@ -1,9 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "le-dawg",
-  "description": "Plugins by Filipe Utzig",
+  "description": "Plugins by le-dawg",
   "owner": {
-    "name": "Filipe Utzig",
+    "name": "le-dawg",
     "email": "le-dawg@users.noreply.github.com"
   },
   "plugins": [
