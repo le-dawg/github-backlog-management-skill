@@ -5,10 +5,10 @@
   "version": "0.3.2",
   "author": {
     "name": "Filipe Utzig",
-    "email": "filipe@gringolito.com"
+    "email": "le-dawg@users.noreply.github.com"
   },
-  "homepage": "https://github.com/gringolito/github-backlog-management-skill",
-  "repository": "https://github.com/gringolito/github-backlog-management-skill",
+  "homepage": "https://github.com/le-dawg/github-backlog-management-skill",
+  "repository": "https://github.com/le-dawg/github-backlog-management-skill",
   "license": "MIT",
   "keywords": ["github", "backlog", "issues", "projects-v2", "milestones", "labels", "invest", "agile", "prioritization"],
   "userConfig": {

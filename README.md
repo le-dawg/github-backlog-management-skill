@@ -43,8 +43,8 @@ Run `/migrate-backlog`, point Claude at the file, and it imports everything into
 Add the marketplace and install the plugin with two Claude Code commands:
 
 ```text
-/plugin marketplace add gringolito/github-backlog-management-skill
-/plugin install github-backlog-management@gringolito
+/plugin marketplace add le-dawg/github-backlog-management-skill
+/plugin install github-backlog-management@le-dawg
 ```
 
 Restart Claude Code if it was already running. All commands below are then available in any repository you open with Claude Code.
