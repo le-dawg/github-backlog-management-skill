@@ -10,7 +10,7 @@ There is **no source code, no build, no tests, no lint**. Each command file is a
 
 ## The commands and their workflow
 
-```
+```text
 initialize-backlog   ─►  plan-release   ─►  add-backlog-item / migrate-backlog
                                                   │
                                                   ├─►  refine-backlog ─► refine-backlog-item   (needs-clarification)
@@ -62,6 +62,16 @@ These were made deliberately — don't undo without explicit user direction:
 - **Migration dep inference is opt-in** — `migrate-backlog` scans source prose for hints like "depends on" / "blocked by" but presents all candidates in a single review block and applies only after user confirmation.
 - **`plugin.json:version` is the update cache key** — Claude Code uses this field to decide whether `/plugin update` fetches new code from the remote. Pushing commits without bumping the version leaves all installed users on the previous version indefinitely. **Policy: version bumps happen at release closure (via `/close-release`), not per PR.** Do not bump `plugin.json:version` in feature PRs.
 
+## Commit requirements
+
+All commits to this repository MUST be both **signed** (`-S`, GPG/SSH signature) and **signed-off** (`-s`, Developer Certificate of Origin). Use:
+
+```bash
+git commit -S -s -m "..."
+```
+
+Never skip signing or the DCO sign-off (`--no-gpg-sign`, omitting `-s`).
+
 ## When editing commands
 
 - Match the existing style: numbered workflow sections with `(MANDATORY)` / `(STRICT)` / `(RELATIVE)` flags, opening prose `You are an AI agent acting as...`, `Rules & Constraints` section, `Output Expectations` section.
@@ -82,3 +92,17 @@ There is no automated test suite. The end-to-end smoke is:
 7. `/validate-backlog` → seed deliberate violations (missing `priority:*`, dangling blocker, cross-Project blocker) and confirm they appear in the Critical/Quality/Consistency report sections.
 8. `/backlog-health` → confirm Markdown report renders all six sections (summary, distribution tables, age cohorts, overdue P0/P1, stale In-Progress, metadata debt); verify stubs excluded from counts; confirm zero mutations.
 9. `/refine-backlog` → presents the `needs-clarification` queue, user selects items, loop delegates to `/refine-backlog-item`; label removed only after pre-removal validation gate passes.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues, managed via the `github-backlog-management-skill`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+This repo uses the `github-backlog-management-skill`'s own label classification (`type:*`, `priority:*`, `effort:*`) rather than the canonical triage roles. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context repo: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

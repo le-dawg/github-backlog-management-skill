@@ -49,6 +49,8 @@ Add the marketplace and install the plugin with two Claude Code commands:
 
 Restart Claude Code if it was already running. All commands below are then available in any repository you open with Claude Code.
 
+> **Note:** If plugin installation fails with an SSH authentication error, see [Plugin install fails with SSH authentication error](#plugin-install-fails-with-ssh-authentication-error).
+
 ---
 
 ## Authentication & Permissions
@@ -299,6 +301,45 @@ A read-only pass that surfaces missing labels, malformed issue bodies, dangling 
 ```
 
 Picks the topmost unblocked Todo item (active milestone first, unmilestoned fallback), reports which items were skipped and why, and walks you through implementation to a PR.
+
+---
+
+## Troubleshooting
+
+### Plugin install fails with SSH authentication error
+
+**Symptom:** Plugin installation fails with one of these errors:
+
+```text
+git@github.com: Permission denied (publickey).
+fatal: Could not read from remote repository.
+```
+
+```text
+No ED25519 host key is known for github.com and you have requested strict checking.
+Host key verification failed.
+fatal: Could not read from remote repository.
+```
+
+**Root cause:** Claude Code clones marketplace plugins using SSH URLs (`git@github.com:...`), even though marketplace repositories are public and read-only. This requires SSH to be configured for GitHub — including authentication keys and a trusted host entry — regardless of whether you use HTTPS with `gh auth login`. This is a known upstream issue tracked at [anthropics/claude-code#26588](https://github.com/anthropics/claude-code/issues/26588).
+
+**Workaround A — rewrite SSH URLs to HTTPS (recommended if you don't rely on SSH for GitHub):**
+
+```bash
+git config --global url."https://github.com/".insteadOf git@github.com:
+```
+
+This tells Git to silently use HTTPS whenever it encounters a GitHub SSH URL, bypassing the SSH requirement entirely.
+
+**Workaround B — configure SSH for GitHub (if you already use or need SSH):**
+
+1. Add GitHub's host key to your known hosts:
+
+```bash
+ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
+```
+
+2. Make sure your SSH key is added to your GitHub account and to your local SSH agent (`ssh-add`).
 
 ---
 

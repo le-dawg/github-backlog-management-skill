@@ -77,6 +77,10 @@ Reuse the discovery pattern from `add-backlog-item`:
   - User/business impact
   - Constraints, risks, edge cases
 - Revisit the displayed relationships:
+  - **Dependency scan**: delegate to the `dependency-inferrer` agent with:
+    - **Prose**: the full issue body (all sections concatenated)
+    - **Issue roster**: the list of open issues in the Project (`gh issue list --state open --json number,title --limit 200 | jq -r '.[] | "#\(.number) \"\(.title)\""'`)
+    If the agent returns any candidates, present them to the user as starting proposals for the relationship review. `UNRESOLVED` targets are surfaced as open questions for the user to clarify.
   - Are existing blockers still relevant? Should any be removed via `gh api -X DELETE "repos/<owner>/<repo>/issues/<n>/dependencies/blocked_by/<blocker-id>"`?
   - Did refinement reveal NEW blockers? (issue numbers; cross-repo allowed)
   - Should the sub-issue parent change or be removed?
@@ -87,14 +91,13 @@ Reuse the discovery pattern from `add-backlog-item`:
 
 ### 4. Reconstruct Body
 
-Build the updated body matching the canonical Issue Forms template (`.github/ISSUE_TEMPLATE/backlog-item.yml`). Section headings MUST be exactly:
+Delegate body authoring to the `issue-body-author` agent:
 
-- `### What`
-- `### Why`
-- `### In Scope`
-- `### Out of Scope` (omit section if not applicable)
-- `### Acceptance Criteria` (formatted as `- [ ]` checklist)
-- `### INVEST Notes` — empty if everything is now specified, OR a smaller list of remaining questions
+- **Mode**: `refine`
+- **Input**: the existing issue body (as fetched in step 2) plus all corrections and answers discovered in step 3
+- **Existing body**: pass the full current body so the agent can preserve unchanged sections
+
+The agent returns an updated body with all `UNKNOWN` / `NEEDS CLARIFICATION` / `_No response_` markers replaced by the discovered content. Any sections where information is still missing will be marked with `<!-- TODO: ... -->` — those remain as open questions in `### INVEST Notes`.
 
 DO NOT introduce new headings or change ordering — `validate-backlog` parses these section headings.
 
@@ -102,26 +105,17 @@ DO NOT introduce new headings or change ordering — `validate-backlog` parses t
 
 ### 5. INVEST Gate (MANDATORY)
 
-Validate the refined item against:
+Delegate to the `invest-gate` agent with the reconstructed body from step 4 and the issue title.
 
-- Independent
-- Negotiable
-- Valuable
-- Estimable
-- Small
-- Testable — every non-blank line in `### Acceptance Criteria` MUST begin with `- [ ]`. If any line does not match:
-  - List each offending line and show its corrected `- [ ] <text>` form
-  - Propose corrected versions; require user approval before applying the body update
+If `invest-gate` returns `Overall: FAIL`:
 
-If any principle still fails after refinement:
-
-- Capture the violation in `### INVEST Notes`
+- Capture each `FAIL` letter's reasoning in `### INVEST Notes`
 - Apply the partial body update (step 6), but SKIP steps 7–10
 - KEEP the `needs-clarification` label
-- Output the partial-refinement result: issue URL + list of INVEST failures + what remains in `### INVEST Notes`
+- Output the partial-refinement result: issue URL + per-letter INVEST verdict from `invest-gate` + what remains in `### INVEST Notes`
 - STOP — do not continue to label/rank re-evaluation or label removal
 
-If splitting is needed (item too large to be Small):
+If splitting is needed (S letter fails):
 
 - Suggest a split via `/add-backlog-item` for the new item(s)
 - Apply the partial body update reflecting the reduced scope of the original item, OR keep the original as-is if the user prefers to handle the split manually

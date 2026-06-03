@@ -61,14 +61,14 @@ Before any item work, verify the repository is provisioned:
 
 ### 3. Definition (STRICT)
 
-Construct the issue body matching the canonical Issue Forms template (`.github/ISSUE_TEMPLATE/backlog-item.yml`). Section headings MUST be exactly:
+Delegate body authoring to the `issue-body-author` agent:
 
-- `### What` — clear and specific description of the work
-- `### Why` — business value, user impact, or technical justification
-- `### In Scope` — explicit list of what is included
-- `### Out of Scope` — explicit list of what is excluded (when relevant; omit section if not)
-- `### Acceptance Criteria` — checklist (`- [ ] ...`) of concrete, testable, unambiguous conditions
-- `### INVEST Notes` — leave blank if fully specified
+- **Mode**: `create`
+- **Input**: the title and all context gathered in step 1 (desired outcome, user/business impact, constraints, risks, edge cases, scope inclusions and exclusions, acceptance criteria, and classification notes)
+
+The agent returns a fully structured body with canonical sections in strict order: `### What` → `### Why` → `### In Scope` → `### Out of Scope` → `### Acceptance Criteria` → `### INVEST Notes`.
+
+If the agent marks any section with `<!-- TODO: ... -->`, STOP and resolve those gaps with the user before proceeding to step 4.
 
 Issue title: concise and descriptive.
 
@@ -82,23 +82,14 @@ Type, Priority, and Effort are NOT in the body — they are applied as repositor
 
 ### 4. INVEST Enforcement (MANDATORY)
 
-Validate that the item is:
+Delegate to the `invest-gate` agent with the body constructed in step 3 and the issue title.
 
-- Independent → No hidden dependencies on other items
-- Negotiable → Not overly prescriptive in implementation
-- Valuable → Clear benefit to user or system
-- Estimable → Enough detail to assess complexity
-- Small → Can be delivered in a single iteration
-- Testable → Acceptance criteria are verifiable and in the correct format. **Format check (MANDATORY):** Every non-blank line in `### Acceptance Criteria` MUST begin with `- [ ]`. If any line does not match:
-  - STOP
-  - List each offending line and show its corrected `- [ ] <text>` form
-  - Propose corrected versions; require user approval before creation proceeds
-
-If any principle fails:
+If `invest-gate` returns `Overall: FAIL`:
 
 - STOP
-- Explain the issue
-- Propose a corrected version
+- Show the per-letter verdict to the user
+- For any `FAIL` letter, propose a corrected version of the relevant section
+- Do NOT proceed to step 5 until the user approves corrections and `invest-gate` returns `Overall: PASS`
 
 ---
 
