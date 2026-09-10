@@ -1,10 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "gringolito",
-  "description": "Plugins by Filipe Utzig",
+  "name": "le-dawg",
+  "description": "Plugins by le-dawg",
   "owner": {
-    "name": "Filipe Utzig",
-    "email": "filipe@gringolito.com"
+    "name": "le-dawg",
+    "email": "le-dawg@users.noreply.github.com"
   },
   "plugins": [
     {
@@ -12,7 +12,7 @@
       "description": "GitHub-native backlog automation. Manage Issues + Projects v2 with AI-enforced INVEST quality, dependency tracking, and one-command execution.",
       "source": {
         "source": "github",
-        "repo": "gringolito/github-backlog-management-skill"
+        "repo": "le-dawg/github-backlog-management-skill"
       },
       "version": "0.3.2",
       "category": "productivity",
